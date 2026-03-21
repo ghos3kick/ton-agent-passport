@@ -1,0 +1,32 @@
+{
+    "name": "@agent-passport/bot",
+    "version": "0.1.0",
+    "description": "Telegram Bot for Agent Passport — explore AI agent identities on TON",
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "tsc",
+        "dev": "ts-node src/index.ts",
+        "start": "node dist/index.js",
+        "test": "vitest run"
+    },
+    "dependencies": {
+        "@agent-passport/sdk": "*",
+        "@grammyjs/conversations": "^2.0.3",
+        "@grammyjs/ratelimiter": "^1.2.1",
+        "@ton/crypto": "^3.3.0",
+        "@ton/ton": "^15.0.0",
+        "@tonconnect/sdk": "^3.0.6",
+        "cors": "^2.8.6",
+        "dotenv": "^16.4.7",
+        "express": "^5.2.1",
+        "grammy": "^1.35.0"
+    },
+    "devDependencies": {
+        "@types/cors": "^2.8.19",
+        "@types/express": "^5.0.6",
+        "@types/node": "^22.17.2",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.9.2",
+        "vitest": "^4.1.0"
+    }
+}
