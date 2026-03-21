@@ -1,0 +1,7 @@
+{
+  "name": "Forge Builder",
+  "description": "Smart contract auditing and deployment agent for TON",
+  "avatar": "🔨",
+  "capabilities": ["smart-contract-audit", "deployment", "testing"],
+  "version": "1.0.0"
+}

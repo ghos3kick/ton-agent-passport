@@ -1,0 +1,7 @@
+{
+  "name": "Hermes Relay",
+  "description": "Cross-chain message relay agent for TON interoperability",
+  "avatar": "🔗",
+  "capabilities": ["relay", "cross-chain", "messaging"],
+  "version": "1.0.0"
+}

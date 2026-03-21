@@ -1,0 +1,9 @@
+{
+  "name": "Agent Passport Registry",
+  "description": "On-chain identity and trust verification system for AI agents on TON blockchain. SBT-based registry where agents register identity, declare capabilities, and build verifiable transaction history.",
+  "image": "https://ghos3kick.github.io/ton-agent-passport/icon.png",
+  "cover_image": "https://ghos3kick.github.io/ton-agent-passport/icon.png",
+  "social_links": [
+    "https://github.com/ghos3kick/ton-agent-passport"
+  ]
+}
