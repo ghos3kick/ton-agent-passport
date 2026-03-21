@@ -1,0 +1,52 @@
+node_modules
+temp
+build
+dist
+.DS_Store
+package.ts
+
+# VS Code
+.vscode/*
+.history/
+*.vsix
+
+# IDEA files
+.idea
+
+# VIM
+Session.vim
+.vim/
+
+# Other private editor folders
+.nvim/
+.emacs/
+.helix/
+
+# Security: env files
+.env
+.env.*
+!.env.example
+.env.local
+*.pem
+*.key
+*.secret
+*.bak
+*.backup
+*.old
+
+# Runtime data
+data/
+
+# Deployment (server-specific)
+ecosystem.config.js
+.pid-*
+configs/*-live.conf
+
+
+# Next.js generated
+.next
+packages/web/next-env.d.ts
+packages/web/tsconfig.tsbuildinfo
+
+# Windows Zone.Identifier files
+*:Zone.Identifier

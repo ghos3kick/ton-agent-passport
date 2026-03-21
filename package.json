@@ -1,0 +1,40 @@
+{
+    "name": "agent-passport",
+    "private": true,
+    "version": "0.0.1",
+    "workspaces": [
+        "packages/*"
+    ],
+    "scripts": {
+        "bp": "blueprint",
+        "start": "blueprint run",
+        "build": "blueprint build",
+        "test": "jest --verbose"
+    },
+    "dependencies": {
+        "@telegram-apps/sdk-react": "^3.3.9",
+        "@ton/core": "~0",
+        "next": "^16.2.0"
+    },
+    "overrides": {
+        "valibot": "^1.1.1",
+        "flatted": ">=3.4.2"
+    },
+    "devDependencies": {
+        "@tact-lang/compiler": ">=1.6.13 <2.0.0",
+        "@ton-community/func-js": ">=0.10.0",
+        "@ton/blueprint": ">=0.40.0",
+        "@ton/crypto": "^3.3.0",
+        "@ton/sandbox": ">=0.37.0",
+        "@ton/test-utils": ">=0.11.0",
+        "@ton/tolk-js": ">=1.0.0",
+        "@ton/ton": ">=16.2.2 <17.0.0",
+        "@types/jest": "^30.0.0",
+        "@types/node": "^22.17.2",
+        "jest": "^30.0.5",
+        "prettier": "^3.6.2",
+        "ts-jest": "^29.4.1",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.9.2"
+    }
+}
