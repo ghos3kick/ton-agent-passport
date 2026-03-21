@@ -177,7 +177,7 @@ Full reference with request/response examples: [API docs](docs/API.md)
 
 ## Live demo
 
-- **Telegram Bot**: [@AgentPassportBot](https://t.me/agent_passport_ton_bot)
+- **Telegram Bot**: [@agent_passport_ton_bot](https://t.me/agent_passport_ton_bot)
 - **Mini App**: available via bot `/app` command
 
 ## Documentation
