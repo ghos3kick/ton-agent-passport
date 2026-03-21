@@ -197,6 +197,17 @@ cd packages/sdk && npm test                 # SDK tests
 cd packages/mini-app && npx vitest run      # frontend tests
 ```
 
+## Built with
+
+This project was developed as part of the
+[TON AI Agent Hackathon 2026](https://identityhub.app/contests/ai-hackathon)
+(Track 1: Agent Infrastructure).
+
+Development was AI-assisted — architecture design, code review, security audit,
+and documentation were done in collaboration with Claude (Anthropic).
+All smart contracts, core logic, and deployment were implemented and verified
+by the author.
+
 ## License
 
 MIT — see [LICENSE](LICENSE)
