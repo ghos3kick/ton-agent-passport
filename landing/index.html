@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Passport — On-chain Identity for AI Agents on TON</title>
+<meta name="description" content="Soulbound passport registry for AI agents on TON blockchain. Non-transferable identity, weighted TrustScore, anti-abuse. Telegram-native.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-deep: #0a0b0f;
+  --bg-card: #12131a;
+  --bg-card-hover: #1a1b24;
+  --border: rgba(255,255,255,0.06);
+  --border-hover: rgba(255,255,255,0.12);
+  --text: #e8e8ed;
+  --text-dim: #8a8a9a;
+  --cyan: #00d4aa;
+  --purple: #7c5cfc;
+  --blue: #00b4ff;
+  --font: 'Outfit', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg-deep);
+  color: var(--text);
+  font-family: var(--font);
+  font-weight: 400;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── Background effects ── */
+.bg-glow {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 0;
+}
+.bg-glow.cyan { width: 600px; height: 600px; background: var(--cyan); top: -200px; right: -100px; }
+.bg-glow.purple { width: 500px; height: 500px; background: var(--purple); bottom: 20%; left: -150px; }
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up {
+  opacity: 0;
+  animation: fadeUp 0.7s ease-out forwards;
+}
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }
+.delay-6 { animation-delay: 0.6s; }
+
+/* ── Nav ── */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(10, 11, 15, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+.nav-logo-mark {
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 0.85rem;
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  border: 1px solid rgba(0, 212, 170, 0.3);
+  border-radius: 6px;
+  padding: 2px 7px;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  list-style: none;
+}
+.nav-links a {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 400;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--text); }
+.badge-testnet {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--cyan);
+  border: 1px solid rgba(0, 212, 170, 0.3);
+  border-radius: 4px;
+  padding: 2px 8px;
+  letter-spacing: 0.05em;
+}
+
+/* ── Container ── */
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Hero ── */
+.hero {
+  padding: 140px 0 60px;
+  text-align: center;
+}
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--cyan);
+  letter-spacing: 0.04em;
+  margin-bottom: 20px;
+}
+.hero h1 {
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 18px;
+}
+.gradient-text {
+  background: linear-gradient(135deg, var(--cyan), var(--blue), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  font-size: 1.1rem;
+  color: var(--text-dim);
+  max-width: 600px;
+  margin: 0 auto 36px;
+  font-weight: 300;
+  line-height: 1.7;
+}
+.hero-buttons {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-family: var(--font);
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.25s;
+  cursor: pointer;
+  border: none;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--cyan), #00b89c);
+  color: #0a0b0f;
+}
+.btn-primary:hover { box-shadow: 0 0 30px rgba(0, 212, 170, 0.3); transform: translateY(-1px); }
+.btn-secondary {
+  background: var(--bg-card);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+
+/* ── Stats bar ── */
+.stats-bar {
+  padding: 40px 0;
+}
+.stats-grid {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.stat-item {
+  flex: 1;
+  padding: 24px 16px;
+  text-align: center;
+  border-right: 1px solid var(--border);
+}
+.stat-item:last-child { border-right: none; }
+.stat-value {
+  font-family: var(--mono);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--cyan);
+  display: block;
+}
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+/* ── Section ── */
+.section {
+  padding: 80px 0;
+}
+.section-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 12px;
+}
+.section-sub {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 1rem;
+  margin-bottom: 48px;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── Cards grid ── */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px;
+  transition: border-color 0.25s, background 0.25s;
+}
+.card:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-card-hover);
+}
+.card-icon {
+  font-size: 1.6rem;
+  margin-bottom: 14px;
+  display: block;
+}
+.card h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.card p {
+  font-size: 0.88rem;
+  color: var(--text-dim);
+  line-height: 1.65;
+}
+.card-tag {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--purple);
+  margin-top: 12px;
+  display: inline-block;
+}
+
+/* ── Architecture cards ── */
+.arch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+.arch-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  transition: border-color 0.25s, background 0.25s;
+}
+.arch-card:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-card-hover);
+}
+.arch-card .dir {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--cyan);
+  margin-bottom: 10px;
+  display: block;
+}
+.arch-card p {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  line-height: 1.65;
+}
+.arch-card .tests {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--purple);
+  margin-top: 10px;
+  display: inline-block;
+}
+
+/* ── Ecosystem table ── */
+.table-wrap {
+  overflow-x: auto;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+.eco-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.eco-table th {
+  background: rgba(255,255,255,0.03);
+  font-weight: 500;
+  text-align: left;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.eco-table th:first-child { font-weight: 600; color: var(--text); }
+.eco-table td {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-dim);
+}
+.eco-table tr:last-child td { border-bottom: none; }
+.eco-table .check { color: var(--cyan); font-weight: 600; text-align: center; }
+.eco-table .dash { text-align: center; color: rgba(255,255,255,0.15); }
+.eco-table .together-row td {
+  color: var(--text);
+  font-weight: 500;
+  background: rgba(0, 212, 170, 0.04);
+}
+
+/* ── CTA links ── */
+.cta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 16px;
+}
+.cta-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 32px 20px;
+  text-decoration: none;
+  color: var(--text);
+  transition: border-color 0.25s, background 0.25s, transform 0.25s;
+}
+.cta-card:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+}
+.cta-icon { font-size: 2rem; margin-bottom: 14px; }
+.cta-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
+.cta-card p { font-size: 0.82rem; color: var(--text-dim); }
+
+/* ── Footer ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 28px 0;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.82rem;
+}
+footer span { margin: 0 8px; opacity: 0.4; }
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hero { padding: 110px 0 40px; }
+  .hero h1 { font-size: 2rem; }
+  .hero-sub { font-size: 1rem; }
+  .stats-grid {
+    flex-direction: column;
+  }
+  .stat-item {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 16px;
+  }
+  .stat-item:last-child { border-bottom: none; }
+  .cards-grid, .arch-grid, .cta-grid {
+    grid-template-columns: 1fr;
+  }
+  .section { padding: 50px 0; }
+  .eco-table { font-size: 0.78rem; }
+  .eco-table th, .eco-table td { padding: 10px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Background glows -->
+<div class="bg-glow cyan"></div>
+<div class="bg-glow purple"></div>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <span class="nav-logo-mark">AP</span>
+      Agent Passport
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#ecosystem">Ecosystem</a></li>
+      <li><span class="badge-testnet">testnet</span></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <p class="hero-eyebrow fade-up">TON AI Agent Hackathon 2026 &middot; Agent Infrastructure</p>
+    <h1 class="fade-up delay-1">On-chain identity for <span class="gradient-text">AI agents</span></h1>
+    <p class="hero-sub fade-up delay-2">
+      Soulbound passport registry on TON. Non-transferable identity, weighted TrustScore, anti-abuse. Telegram-native.
+    </p>
+    <div class="hero-buttons fade-up delay-3">
+      <a href="/explore" class="btn btn-primary">Explore Passports &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="stats-bar">
+  <div class="container fade-up delay-4">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-value">120</span>
+        <div class="stat-label">Tests passing</div>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">TEP-85</span>
+        <div class="stat-label">SBT Standard</div>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">50</span>
+        <div class="stat-label">Security checks</div>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value" id="stat-minted">–</span>
+        <div class="stat-label">Passports minted</div>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">6</span>
+        <div class="stat-label">API endpoints</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="section" id="features">
+  <div class="container">
+    <h2 class="section-title fade-up">Features</h2>
+    <p class="section-sub fade-up delay-1">Everything an AI agent needs for verifiable on-chain identity</p>
+    <div class="cards-grid">
+      <div class="card fade-up delay-1">
+        <span class="card-icon">&#x1F512;</span>
+        <h3>Soulbound Tokens (TEP-85)</h3>
+        <p>Non-transferable passports bound to the agent's wallet forever. No reputation laundering, no identity markets. Written in Tact, TEP-62/85 compliant.</p>
+      </div>
+      <div class="card fade-up delay-2">
+        <span class="card-icon">&#x1F4CA;</span>
+        <h3>Weighted TrustScore</h3>
+        <p>40% transaction count + 60% volume, log&#x2081;&#x2080; scaling. Backwards-compatible fallback for agents without volume data. Documented formula.</p>
+      </div>
+      <div class="card fade-up delay-3">
+        <span class="card-icon">&#x1F6E1;&#xFE0F;</span>
+        <h3>Anti-abuse System</h3>
+        <p>Dust filter (&lt;0.01&nbsp;TON), self-dealing detection, circular detection (A&rarr;agent&rarr;A within 5&nbsp;min window). 8 dedicated tests.</p>
+      </div>
+      <div class="card fade-up delay-4">
+        <span class="card-icon">&#x1F4F1;</span>
+        <h3>Telegram-native</h3>
+        <p>Mini App with holographic passport cards, generative robot avatars, TrustScore ring. Telegram Bot for instant mint/verify/search.</p>
+      </div>
+      <div class="card fade-up delay-5">
+        <span class="card-icon">&#x1F50D;</span>
+        <h3>Security-first</h3>
+        <p>50-point security audit. HSTS, CSP, rate limiting, timingSafeEqual auth, tx mutex, input validation, SSH hardened, UFW firewall.</p>
+      </div>
+      <div class="card fade-up delay-6">
+        <span class="card-icon">&#x2705;</span>
+        <h3>120 Tests</h3>
+        <p>36 contracts + 31 SDK + 45 Mini App + 8 Bot. TypeScript strict mode, address validation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Architecture -->
+<section class="section" id="architecture">
+  <div class="container">
+    <h2 class="section-title fade-up">Architecture</h2>
+    <p class="section-sub fade-up delay-1">Monorepo with strict build order and full test coverage</p>
+    <div class="arch-grid">
+      <div class="arch-card fade-up delay-1">
+        <span class="dir">contracts/</span>
+        <p>Tact smart contracts TEP-62/85 SBT. agent_registry + agent_passport. Public mint 0.11&nbsp;TON, admin mint, revocation. Bounce handler.</p>
+        <span class="tests">36 tests</span>
+      </div>
+      <div class="arch-card fade-up delay-2">
+        <span class="dir">packages/sdk/</span>
+        <p>TypeScript SDK. Address validation via isValidTonAddress(). Strict TS. Full read API for passports, collection data, trust scores.</p>
+        <span class="tests">31 tests</span>
+      </div>
+      <div class="arch-card fade-up delay-3">
+        <span class="dir">packages/bot/</span>
+        <p>grammY Bot + Express API, 7 endpoints. Rate limiting, tx mutex, timingSafeEqual. Direct wallet signing. Transaction monitor + anti-abuse.</p>
+      </div>
+      <div class="arch-card fade-up delay-4">
+        <span class="dir">packages/mini-app/</span>
+        <p>Vite + React + TS. TON Connect. Holographic cards, RobotAvatar, TrustScore ring. Quick&nbsp;Mint + Self&nbsp;Mint.</p>
+        <span class="tests">45 tests</span>
+      </div>
+      <div class="arch-card fade-up delay-5">
+        <span class="dir">packages/web/</span>
+        <p>Next.js SSR dashboard. Server-side TONAPI proxy. Explorer, Verify, My Passports. Responsive Tailwind UI.</p>
+      </div>
+      <div class="arch-card fade-up delay-6">
+        <span class="dir">infra/</span>
+        <p>nginx reverse proxy, HSTS, CSP, rate limiting. PM2 process manager. Certbot + Cloudflare DNS-01. UFW (22/80/443).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- CTA -->
+<section class="section">
+  <div class="container">
+    <h2 class="section-title fade-up">Try it now</h2>
+    <p class="section-sub fade-up delay-1">Everything is live on testnet</p>
+    <div class="cta-grid">
+      <a href="https://t.me/agent_passport_ton_bot" class="cta-card fade-up delay-1" target="_blank" rel="noopener">
+        <span class="cta-icon">&#x1F4F1;</span>
+        <h3>Mini App</h3>
+        <p>Holographic UI, TON Connect</p>
+      </a>
+      <a href="/explore" class="cta-card fade-up delay-3">
+        <span class="cta-icon">&#x1F310;</span>
+        <h3>Explore</h3>
+        <p>Browse all agent passports</p>
+      </a>
+      <a href="https://github.com/ghos3kick/ton-agent-passport" class="cta-card fade-up delay-4" target="_blank" rel="noopener">
+        <span class="cta-icon">&#x1F4BB;</span>
+        <h3>GitHub</h3>
+        <p>Open source, MIT</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    Agent Passport <span>&middot;</span> Built on TON <span>&middot;</span> TEP-62/85 SBT <span>&middot;</span> Open Source
+  </div>
+</footer>
+
+<script>
+fetch('/api/passports?limit=0')
+  .then(r => r.json())
+  .then(data => {
+    const el = document.getElementById('stat-minted');
+    if (el && data.total != null) el.textContent = data.total;
+  })
+  .catch(() => {});
+</script>
+</body>
+</html>
