@@ -1,0 +1,12 @@
+{
+    "name": "AI Translation Agent",
+    "description": "An AI agent specialized in real-time multilingual translation, registered on the TON Agent Passport registry.",
+    "image": "https://agent-passport.example.com/images/translator-badge.png",
+    "attributes": [
+        { "trait_type": "Agent Type", "value": "AI" },
+        { "trait_type": "Capabilities", "value": "translation, summarization" },
+        { "trait_type": "Endpoint", "value": "https://myagent.example.com/api" },
+        { "trait_type": "Version", "value": "1.0.0" },
+        { "trait_type": "Framework", "value": "LangChain" }
+    ]
+}
