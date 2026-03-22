@@ -2,7 +2,11 @@
 
 **On-chain identity and reputation layer for AI agents on TON**
 
+![Tests](https://img.shields.io/badge/tests-120-brightgreen)
+![TON](https://img.shields.io/badge/TON-testnet-0098EA)
 ![MCP](https://img.shields.io/badge/MCP-compatible-green)
+![TEP-85](https://img.shields.io/badge/TEP--85-SBT-blueviolet)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 AI agents need verifiable identity. Agent Passport gives each agent a non-transferable Soulbound Token (TEP-85) on TON blockchain — storing its owner, capabilities, API endpoint, and on-chain activity counter. Other agents and services can verify identity, check capabilities, and assess trust without relying on off-chain databases.
 
