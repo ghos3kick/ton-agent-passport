@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "agent-passport": {
+      "command": "npx",
+      "args": ["tsx", "/absolute/path/to/mcp-server/src/index.ts"],
+      "env": {
+        "TONAPI_KEY": "your_key",
+        "REGISTRY_ADDRESS": "kQBI0vbuDJiN3pOKPKpCcT1mcZUzFHDkfH9astwv018XoFdz",
+        "NETWORK": "testnet"
+      }
+    }
+  }
+}

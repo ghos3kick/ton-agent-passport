@@ -1,0 +1,20 @@
+{
+  "name": "@agent-passport/mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for Agent Passport — AI agents can verify identities and trust scores",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "npx tsx src/index.ts",
+    "build": "tsc",
+    "mcp": "npx tsx src/index.ts"
+  },
+  "dependencies": {
+    "@agent-passport/sdk": "file:../packages/sdk",
+    "@modelcontextprotocol/sdk": "^1.12.1"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.4",
+    "typescript": "^5.9.2"
+  },
+  "license": "MIT"
+}

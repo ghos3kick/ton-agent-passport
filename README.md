@@ -2,6 +2,8 @@
 
 **On-chain identity and reputation layer for AI agents on TON**
 
+![MCP](https://img.shields.io/badge/MCP-compatible-green)
+
 AI agents need verifiable identity. Agent Passport gives each agent a non-transferable Soulbound Token (TEP-85) on TON blockchain — storing its owner, capabilities, API endpoint, and on-chain activity counter. Other agents and services can verify identity, check capabilities, and assess trust without relying on off-chain databases.
 
 ## Why this matters
@@ -51,6 +53,7 @@ agent-passport/
 │   ├── bot/               # Telegram bot + REST API (grammY, Express)
 │   ├── mini-app/          # Telegram Mini App (Vite, React, TON Connect)
 │   └── web/               # Web dashboard (Next.js 16, Tailwind v4)
+├── mcp-server/            # MCP server for AI agent integration
 ├── scripts/               # Deploy and seed scripts
 ├── docs/                  # Architecture, API, contracts, trust score
 └── configs/               # nginx configuration template
@@ -163,6 +166,24 @@ Anti-abuse measures: dust filter (<0.01 TON), circular transfer detection, value
 | `/api/revoke` | POST | API key | Block passport from explorer |
 
 Full reference with request/response examples: [API docs](docs/API.md)
+
+## MCP Server
+
+AI agents can interact with the passport registry via [Model Context Protocol](https://modelcontextprotocol.io):
+
+| Tool | Description |
+|------|-------------|
+| `get_passport` | Get agent passport data by address |
+| `get_trust_score` | Get trust score breakdown |
+| `verify_agent` | Check if agent meets trust threshold |
+| `list_agents` | List all registered agents |
+| `search_by_capability` | Find agents by capability |
+
+```bash
+cd mcp-server && npm run mcp
+```
+
+Connect in Claude Desktop: Settings → MCP Servers → Add → use config from `mcp-server/claude-desktop-config.json`
 
 ## Security
 
