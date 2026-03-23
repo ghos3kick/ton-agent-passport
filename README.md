@@ -23,10 +23,10 @@ As autonomous AI agents proliferate, the question "who is this agent and can I t
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                  TON Blockchain (testnet)                │
+│                  TON Blockchain (testnet)               │
 │  ┌───────────────────┐    ┌──────────────────────────┐  │
-│  │  AgentRegistry     │───>│  AgentPassport (SBT)    │  │
-│  │  TEP-62 Collection │    │  Non-transferable, TEP-85│  │
+│  │  AgentRegistry    │───>│  AgentPassport (SBT)     │  │
+│  │  TEP-62 Collection│    │ Non-transferable, TEP-85 │  │
 │  └─────────┬─────────┘    └──────────────────────────┘  │
 └────────────┼────────────────────────────────────────────┘
              │
@@ -104,7 +104,6 @@ Manages the passport collection. Owner-only minting, public mint with fee, batch
 
 | Handler | Access | Description |
 |---------|--------|-------------|
-| `MintPassport` | owner | Deploy new SBT passport |
 | `PublicMintPassport` | anyone (fee required) | Permissionless mint with 0.05 TON fee |
 | `BatchIncrementTxCount` | owner | Batch increment agent activity counters |
 | `BatchUpdateCapabilities` | owner | Batch update agent capabilities |
@@ -158,14 +157,13 @@ Anti-abuse measures: dust filter (<0.01 TON), circular transfer detection, value
 
 ## REST API
 
-6 endpoints behind nginx reverse proxy with multi-layer rate limiting:
+5 endpoints behind nginx reverse proxy with multi-layer rate limiting:
 
 | Endpoint | Method | Auth | Description |
 |----------|--------|------|-------------|
 | `/api/health` | GET | — | Service health check |
 | `/api/passports` | GET | — | List passports with pagination |
 | `/api/reputation/:address` | GET | — | Trust score breakdown for an address |
-| `/api/mint` | POST | API key or Telegram initData | Mint a new passport |
 | `/api/public-mint-payload` | POST | — | Generate unsigned tx payload for TON Connect |
 | `/api/revoke` | POST | API key | Block passport from explorer |
 
