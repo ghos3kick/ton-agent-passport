@@ -36,7 +36,6 @@ Agent Passport uses a two-layer security architecture:
 | Issue | Reason |
 |-------|--------|
 | `fee=0` is possible via `SetMintFee` | Admin flexibility for testnet/promotions. Mainnet will enforce minimum. |
-| `PublicMint` allows minting to any address | By design — admin mints passports for agents that don't have wallets yet. |
 | Agent names are not unique on-chain | On-chain string uniqueness check is expensive. Uniqueness enforced at API layer. Display names come from `agent-names.json`, not on-chain metadata. |
 | `BatchIncrementTxCount` processes one passport per message | Registry forwards to individual passport contracts. True batch (loop over N items) risks hitting gas limits on TON. |
 | In-memory rate limiting (not Redis) | Single-instance deployment. Redis is unnecessary overhead for current scale. |
