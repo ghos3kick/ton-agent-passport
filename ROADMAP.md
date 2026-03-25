@@ -5,6 +5,39 @@
 
 ---
 
+## Catchain 2.0 Readiness
+
+TON is rolling out Catchain 2.0 consensus upgrade (mainnet ETA: April 2026), reducing block finality from ~10s to ~1s and block interval from ~2.5s to 200–400ms.
+
+### Impact on Agent Passport
+
+| Component | Impact | Action Required |
+|-----------|--------|-----------------|
+| Tact contracts (Registry + Passport) | None — consensus-layer change, no contract modifications needed | No action |
+| TEP-62/85 compliance | None — standard is transport-agnostic | No action |
+| Mint UX (Mini App + Bot) | Positive — finalization drops from ~10s to ~1s, near-instant mint confirmation | Reduce polling interval from 3s to 500ms |
+| Transaction monitor | Medium — up to 10x more blocks/sec, current polling may miss blocks under load | Migrate to TON Center Streaming API v2 |
+| TrustScore anti-abuse | Low — dust filter and circular detection are amount-based, not timing-based | Add rate-based detection as additional layer |
+| SDK (tonapi-sdk-js) | Low — TONAPI abstracts block-level changes | Monitor for SDK updates post-upgrade |
+
+### Migration Plan
+
+**Phase 1: Validation (pre-mainnet)**
+- Run full test suite (34 contract + 31 SDK tests) on sub-second testnet
+- Verify batch mint operations complete correctly at higher block frequency
+- Confirm transaction monitor has zero block loss over 30+ minute runs
+
+**Phase 2: UX Optimization (post-mainnet)**
+- Reduce Mini App mint status polling interval to 500ms
+- Update bot confirmation messages to reflect near-instant finality
+- Add real-time mint status via Streaming API v2 websocket
+
+**Phase 3: Monitor Hardening**
+- Migrate transaction monitor from polling to Streaming API v2
+- Handle all four transaction statuses: `pending` → `confirmed` → `finalized` → `trace_invalidated`
+- Add rate-based anti-abuse detection (transactions per minute per agent)
+- Load test monitor at 5 blocks/sec sustained throughput
+
 ## Security model
 
 Agent Passport uses a two-layer security architecture:
